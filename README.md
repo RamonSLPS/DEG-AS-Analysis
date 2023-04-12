@@ -12,7 +12,7 @@ Pre-requirements and tools:
 
 The "Processing and quantification" pipeline contains the data processing steps made in shell/bash using Trimmomatic and transcripts abundance quantification with Salmon.
 
-The "Import and DEG analysis" pipeline explain step by step how to import your salmon quantification results into R and the additional necessary information to run the Gene Differential Expression Analysis using the R packages GenomicFeatures, Tximport and DESeq2.
+The "Importing and DEG analysis" pipeline explain step by step how to import your salmon quantification results into R and the additional necessary information to run the Gene Differential Expression Analysis using the R packages GenomicFeatures, Tximport and DESeq2.
 
 The "Alternative Splicing analysis" pipeline shows the last step of the study, showing how to use the R package IsoformSwitchAnalyzeR to identify and annotate the occurence, type and number of alternative splicing events and the resultant iform switching. 
 
