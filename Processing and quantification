@@ -1,0 +1,23 @@
+## Loop process your paired end RNAseq datasets with general filtering and illumina adapters trimming parameters.
+  ## if necessary you can provide an fasta file containing specific adapters of your datasets in the ILLUMINACLIP parameter.
+  ## your datasets must be named like "sample01_L.fastq and sample01_R.fastq" to this loop work proper.
+for i in /path/to/your/raw/datasets/sample{01..06}_L.fastq;
+do
+samp=$(echo ${i} | sed "s/[L].*//")
+echo "processing sample ${samp}L and ${samp}R"
+trimmomatic PE ${samp}L.fastq ${samp}R.fastq -baseout ${samp} ILLUMINACLIP:TruSeq3-PE:2:30:10 LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:36
+done
+
+## Create an index for salmon using a cDNA file.
+  ## I recommend you to search the closest model relative to your subject in Ensembl database, and use the "cDNA.all.fa" file to build your index.
+salmon index -t /path/to/the/cdna/animal.cdna.all.fa -i animal_index
+
+## Loop transcript abundance estimation with salmon giving a root name and the index you built before.
+  ## The datasets must be renamed like "sample01_L.fastq and sample01_R.fastq" to this loop work proper.
+for i in /path/to/your/processed/paired/datasets/sample{01..06}_L.fastq;
+do
+samp=$(echo ${i} | sed "s/[L].*//")
+outp=$(echo ${samp} | awk -F'/' '{print $8}')
+echo "processing sample ${samp}"
+salmon quant -i /path/to/the/built/index/animal_index -l A -1 ${samp}L.fastq -2 ${samp}R.fastq -o /path/where/you/want/to/output/${outp}quant
+done
