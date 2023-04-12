@@ -1,0 +1,50 @@
+## Calling of the packages that will be necessary for this analysis.
+library(tximport)
+library(tximportData)
+library(readr)
+library(GenomicFeatures)
+library(DESeq2)
+
+## Create an object named "gtf_dir" containing the path to your reference GTF file.
+  ## You can use the same command to import GFF annotations just by changing the file format in the pathway.
+gtf_dir <- "path/to/your/data/dataset.gtf"
+## Create an TxDb container parting from GTF files to store your study subject transcript annotation data.
+  ## Only specify the format of your file if the program couldn't identify it, in most cases just use "auto".
+txdb <- makeTxDbFromGFF(file=gtf_dir, format="auto", 
+dataSource="A string containing informations about the origin of the annotation used to build this TxDb",
+organism="specific name of the font of this GTF file")
+    ## Pay attention to the correct spelling of the name of the genos and the species of the subject, it will be very useful to the program to access
+    important information about it.
+## You can save your TxDb container in a file if you want, using the command ... and loading it again with ... when necessary.
+  ## Doing it can be useful to shorten the time of this analysis.
+
+# Create an text file named "samples.txt" in a tsv-like format containing primarily the run and condition columns as they are identified in your directory.
+  ## For easily pathing to ir, put in the root directory of the quantifications.
+  
+## Create an object named "samp_dir" containing the path to the root directory of your salmon quantification files.
+samp_dir <- "path/to/your/salmon/quantifications"
+## Read the "samples.txt" file, pointing its path and name it as an data frame named "samples".
+samples <- read.table(file.path(dir, "samples.txt"), header=TRUE)
+## Create an tx2gene dataframe which links "transcript ID" and "Gene ID".
+keys <- keys(txdb, keytype="TXNAME")
+tx2gene <- select(txdb, keys,"GENEID", "TXNAME")
+## Create an dataframe named "files" and point the program to retrieve the "quant.sf" files in each run directories based on the run names provided before.
+files <- file.path(dir, "salmon", samples$run, "quant.sf")
+names(files) <- paste0("sample", 1:6)
+## Proceed to import your salmon quantification files combining all the objects built until now.
+txi.salmon <- tximport(files, type="salmon", tx2gene=tx2gene, ignoreTxVersion=TRUE)
+
+## Create an DESeq base dataframe named "dds" parting from the built Tximport "importation" object
+  ## in the colData parameter, you can provide the already made dataframe containing each run information built named "samples".
+  ## the design option is used to point out your study comparative design in a equation format, in this case I just pointed the run column as the unique
+  comparative parameter.
+dds <- DESeqDataSetFromTximport(txi.salmon, colData=samples, design=~condition)
+## Run the Differential Expression Analysis and create an object containing the results of this analysis named "dseq_res".
+dds <- DESeq(dds)
+dseq_res <- results(dds)
+
+## You can save the result table with the command:
+  write.csv(dseq_res, "directory/where/you/want/to/save/DEG_results.csv")
+
+
+
