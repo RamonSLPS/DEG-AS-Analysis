@@ -1,4 +1,4 @@
-This pipelines are built to study the Differentialy Expressed Genes and the occurrence of Alternative Splicing events parting from RNAseq data obtained from public databases, like Ensembl or NCBI.
+This pipelines were made to study Differentialy Expressed Genes and the occurrence of Alternative Splicing and isoform switching events parting from two biological triplicates of paired-end RNAseq data.
 
 Pre-requirements and tools:
 - Trimmomatic
