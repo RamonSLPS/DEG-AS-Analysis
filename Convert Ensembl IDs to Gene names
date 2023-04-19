@@ -1,0 +1,37 @@
+## Call the packages that will be necessary for this step.
+library(biomaRt)
+
+## Its important to modify the name of the EnsemblIds column to "geneIds" in the results CSV of the DESeq2 analysis.
+
+## Read the data frame containing the results of the Differential expression analysis and store it in a object named "difExpression.df"
+difExpression.df <- read.csv("/path/to/Deseq2/results/DEG_results.csv")
+
+## Create an object named "ensembl" containing all "gene" related databases for annotation.
+ensembl <- useEnsembl(biomart="genes")
+
+## Print the list of the specific codes of all "gene"" related datasets in Ensembl.
+  ## You just need to use it once for subject animal to discover the dataset name/code you need to call later.
+    ## Search for the subject that you are studying and then copy the name/code in the "dataset" column.
+listDatasets(ensembl)
+
+## Create a conector between database and dataset by giving the code/name of the subject you found before.
+ensembl.con <- useMart("ensembl", dataset="subject_gene_ensembl")
+
+## Create an table following this parameters:
+  ## Ask for the correlation between the "Ensembl ID" present in the Differential expression table and its corresponding "Gene Symbol";
+  ## The name of the type of information need to be annotated (in this case is Ensembl IDs);
+  ## Gives the name of the column the "IDs" are located in the differential expression table;
+  ## Informs the conector that contains which species and database you want to guide your annotation.
+bioMart_res <- getBM(attributes=c("ensembl_gene_id", "external_gene_name")
+filters="ensembl_gene_id",
+values=difExpression.df$geneIds,
+mart=ensembl.con)
+
+## If you want to retrieve another types of information in your annotation table, call this lists to search for other possible parameters:
+listAttributes(ensembl.con)
+listFilters(ensembl.con)
+
+## You can save the list of gene IDs and Symbols using this command:
+write.csv(bioMart_res, "directory/where/you/want/to/save/bioMart_results.csv")
+
+## You can copy and paste the "Gene symbols" column in your DESeq2 results table as they are in the same order.
