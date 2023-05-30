@@ -2,13 +2,13 @@ This pipelines were made to study Differentialy Expressed Genes and the occurren
 
 Pre-requirements and tools:
 - Trimmomatic
-- Salmon quant
-- R v4.2 or higher
+- Salmon v. 1.4.0
+- R v4.3
 - Bioconductor package
-- Tximport and TximportData
-- GenomicFeatures
-- DESeq2
-- IsoformSwitchAnalyzeR
+- Tximport
+- GenomicFeatures v. 1.53
+- DESeq2 v. 1.41
+- IsoformSwitchAnalyzeR v. 1.99
 
 The "Processing and quantification" pipeline contains the data processing steps made in shell/bash using Trimmomatic and transcripts abundance quantification with Salmon.
 
