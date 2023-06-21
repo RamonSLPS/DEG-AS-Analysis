@@ -7,6 +7,7 @@ samp=$(echo ${i} | sed "s/[L].*//")
 echo "processing sample ${samp}L and ${samp}R"
 trimmomatic PE ${samp}L.fastq ${samp}R.fastq -baseout ${samp} ILLUMINACLIP:TruSeq3-PE:2:30:10 LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:36
 done
+#### For an unknown reason Trimmomatic seems to not work anymore, but any other Trimming program can work fine
 
 ## Create an index for salmon using a cDNA file.
   ## I recommend you to search the closest model relative to your subject in Ensembl database, and use the "cDNA.all.fa" file to build your index.
