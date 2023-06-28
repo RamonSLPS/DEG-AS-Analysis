@@ -10,4 +10,8 @@ Dependencies and versions necessary:
 - DESeq2 (v. 1.41)
 - IsoformSwitchAnalyzeR (v. 1.99)
 
-Fell free to message me in case of any doubts about any part of the workflow.
+To perform this analysis you will need:
+- At least 2 biological triplicates (three samples for each condition)
+- A GTF file for the animal you are studying (or a related specie)
+- Its corresponding cDNA transcripts file
+  ## This two can be preferably obtained from ENSEMBL EBI.
