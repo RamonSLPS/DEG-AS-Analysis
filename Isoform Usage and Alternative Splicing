@@ -1,23 +1,28 @@
 library("IsoformSwitchAnalyzeR")
 
-## Create objects providing paths for the files the program will need to work
+## Create objects providing paths for the files the program will need to work.
 quantsDir <- "/path/to/your/root/salmon/quantifications/file"
 gtfDir <- "/path/to/your/animal.gtf"
 cdnaDir <- "path/to/your/animal.fa"
 rootDir <- "/path/to/your/main/directory"
 
+## Create a dataframe containing informations imported from the quantifications.
 quants.df <- importIsoformExpression(
 	parentDir=quantsDir,
 	addIsofomIdAsColumn=TRUE
 )
+## Create a dataframe with the design of your study with two columns: one containing the name (code) of your samples; and one with its corresponding condition.
 design.df <- data.frame(
 	sampleID=c("Sample_1", "Sample_2", "Sample_3", "Sample_4", "Sample_5", "Sample_6"),
 	condition=c("Condition_1", "Condition_1", "Condition_1","Condition_2", "Condition_2", "Condition_2")
 )
+## Create a dataframe to inform which comparissons you want to test in each row (condition 1 might be the control sample).
 comp.df <- data.frame(
 	condition_1=c("Condition_1"),
 	condition_2=c(Condition_2")
 )
+## Create a IsoformSwitchList named 'aSwitchlist', and import all necessary data into it.
+	## This is one of the most important steps, so be attent to errors or warning messages.
 aSwitchlist <- importRdata(
 	isoformCountMatrix=quants.df$counts,
 	isoformRepExpression=quants.df$abundance,
@@ -27,6 +32,8 @@ aSwitchlist <- importRdata(
 	comparisonsToMake=comp.df,
 	fixStringTieAnnotationProblem=TRUE
 )
+## The next two commands are statistical and expression filters;
+	## I recommend you to read the manual to know which parameters will fit your study better.
 aSwitchlist <- preFilter(
 	aSwitchlist,
 	geneExpressionCutoff=1,
@@ -43,10 +50,11 @@ aSwitchlist <- isoformSwitchTestDEXSeq(
 	aSwitchlist,
 	reduceToSwitchingGenes=FALSE
 )
-
+## This is the best option for those who don't want to do the external analysis, specially if you are only interested in Alternative splicing.
 aSwitchlist <- isoformSwitchAnalysisCombined(
 	aSwitchlist
 )
+## The next to commands will detect the Alternative splicing and Intron retention events.
 aSwitchlist <- analyzeAlternativeSplicing(
 	aSwitchlist,
 	onlySwitchingGenes=FALSE
@@ -54,3 +62,9 @@ aSwitchlist <- analyzeAlternativeSplicing(
 aSwitchlist <- analyzeIntronRetention(
 	aSwitchlist, onlySwitchingGenes=FALSE
 )
+
+## To view the resulting graphics, you can use this commands:
+extractSplicingSummary(aSwitchlist) ## For viewing the occurence of each type of event in each comparisson;
+extractSplicingEnrichment(aSwitchlist) ## For viewing the number of genes affected by each event in each comparisson.
+## or use this to view the global Splicing events
+view(aSwitchlist$AlternativeSplicingAnalysis)
